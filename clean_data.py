@@ -17,10 +17,8 @@ def rm_ext_and_nan(CTG_features, extra_feature):
     :return: A dictionary of clean CTG called c_ctg
     """
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
-    #c_ctg = CTG_features.copy()
-    #c_ctg = c_ctg.apply(pd.to_numeric, errors='coerce')
-    #c_ctg = pd.to_numeric(c_ctg, errors='coerce')
-    #c_ctg.drop(columns=['DR'], inplace=True)
+    # We go through the list of features (without extra_feature), transform the
+    # non-numerical values to NaN and put the remaining values in a dictionary
     c_ctg = {}
     lft = list(CTG_features.columns.values)
     for ft in lft:
@@ -44,6 +42,9 @@ def nan2num_samp(CTG_features, extra_feature):
     """
     c_cdf = {}
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
+    # We go through the list of features (without extra_feature), transform the
+    # non-numerical values to NaN, then replace the NaN by random values of the
+    # same column and put the values in a dictionary.
     lft = list(CTG_features.columns.values)
     for ft in lft:
         if ft == extra_feature:
@@ -69,6 +70,7 @@ def sum_stat(c_feat):
     :return: Summary statistics as a dicionary of dictionaries (called d_summary) as explained in the notebook
     """
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
+    # We sum the stats (min, Q1, median, Q3, max) for each feature 
     d_summary = {}
     lft = list(c_feat.columns.values)
     for ft in lft:
@@ -92,6 +94,7 @@ def rm_outlier(c_feat, d_summary):
     """
     c_no_outlier = {}
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
+    # We remove the outliers for each feature according to the definition
     lft = list(c_feat.columns.values)
     for ft in lft:
         ft_dict = d_summary[ft]
@@ -113,6 +116,7 @@ def phys_prior(c_cdf, feature, thresh):
     :return: An array of the "filtered" feature called filt_feature
     """
     # ------------------ IMPLEMENT YOUR CODE HERE:-----------------------------
+    # We remove non-physiological values for a feature according to thresh
     non_filt = c_cdf[feature]
     filt_feature = []
     for item in non_filt:
@@ -133,6 +137,9 @@ def norm_standard(CTG_features, selected_feat=('LB', 'ASTV'), mode='none', flag=
     """
     x, y = selected_feat
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
+    # We find the normalized/standardized data for each feature, according to
+    # the method mode. We set flag to true if we want to display the data before
+    # and after applying the mode for two given features.
     nsd_res = CTG_features.copy()
     lft = list(nsd_res.columns.values)
     for ft in lft:
@@ -145,16 +152,18 @@ def norm_standard(CTG_features, selected_feat=('LB', 'ASTV'), mode='none', flag=
             col = np.divide(col - col.mean(), (col.max() - col.min()))
         nsd_res[ft] = col
     if flag==True:  
-        xlbl = ['Units {x} before','Units {y} before']
+        xlbl = [f'Units {x}',f'Units {y}']
         axarr = CTG_features.hist(column=[x, y], bins=100,layout = (1, 2),figsize=(10, 5))
         for i,ax in enumerate(axarr.flatten()):
             ax.set_xlabel(xlbl[i])
             ax.set_ylabel("Count")
-        xlbl2 = ['Units {x} after','Units {y} after']
+            ax.set_title(f'{selected_feat[i]} before {mode}')
+        xlbl2 = [f'Units {x}',f'Units {y}']
         axarr2 = nsd_res.hist(column=[x, y], bins=100,layout = (1, 2),figsize=(10, 5))
         for i,ax in enumerate(axarr2.flatten()):
             ax.set_xlabel(xlbl2[i])
             ax.set_ylabel("Count")
+            ax.set_title(f'{selected_feat[i]} after {mode}')
         plt.show()
     # -------------------------------------------------------------------------
     return pd.DataFrame(nsd_res)
