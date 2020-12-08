@@ -51,13 +51,12 @@ def nan2num_samp(CTG_features, extra_feature):
         else:
             col = CTG_features[ft].copy()
             col = pd.to_numeric(col, errors='coerce')
-            '''
-            for i in range(len(col)):
-                if col[i].isnull():
-                    col[i] = np.random.choice(col)
-            '''
-            nan_list = col.isnull()
-            col[nan_list] = np.random.choice(col)
+
+            nan_list = np.array(col.isnull())
+            val_list = col[col.notnull()].array
+            for i in range(len(nan_list)):
+                if nan_list[i] == True:
+                    col.iloc[i] = np.random.choice(val_list)
             c_cdf[ft] = col
     # -------------------------------------------------------------------------
     return pd.DataFrame(c_cdf)
