@@ -19,6 +19,10 @@ def pred_log(logreg, X_train, y_train, X_test, flag=False):
     :return: A two elements tuple containing the predictions and the weightning matrix
     """
     # ------------------ IMPLEMENT YOUR CODE HERE:-----------------------------
+    # Predict the output of a test set by applying and fitting a logistic regression
+    # on a training set. Returns the weights and the predictions (if flag is true, then
+    # the probablities of the predictions, otherwise the predictions themselves).
+    
     logreg.fit(X_train,y_train)
     if flag==True:
         y_pred_log = logreg.predict_proba(X_test)
@@ -88,6 +92,9 @@ def cv_kfold(X, y, C, penalty, K, mode):
             for train_idx, val_idx in kf.split(X, y):
                 x_train, x_val = X.iloc[train_idx], X.iloc[val_idx]
         # ------------------ IMPLEMENT YOUR CODE HERE:-----------------------------
+        # For each parameter tested in the cross fold validation, we keep a dictionary
+        # with the values of the parameters studied and the mean and standard deviation
+        # of the loss of the logistic regression.
                 y_train, y_val = y[train_idx], y[val_idx]
                 y_pred_log, w_log = pred_log(logreg, nsd(x_train, mode=mode), y_train, nsd(x_val, mode=mode), flag=True)
                 loss_val_vec[k] = log_loss(y_val, y_pred_log)
@@ -111,6 +118,7 @@ def odds_ratio(w, X, selected_feat='LB'):
              odds_ratio: the odds ratio of the selected feature and label
     """
     # ------------------ IMPLEMENT YOUR CODE HERE:-----------------------------
+    # We find the odd_ratio according to a feature and the odds for a given set
     normal_label = 0
     ind_ft = X.columns.get_loc(selected_feat)
     w_ft = w[normal_label,ind_ft]
